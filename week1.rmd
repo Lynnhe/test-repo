@@ -65,22 +65,87 @@ read.table() with sep="," ，header=TRUE
 需加载XML包
 （1）解析xml文件
     fileUrl <- "http://www.w3schools.com/xml/simple.xml"
-    doc <- xmlTreeParse(url,userInternet=TRUE)
+    doc <- xmlTreeParse(fileUrl,useInternal=TRUE)
    ##解析html文件htmlTreeParse()
 （2）读取根节点  rootNode <- xmlRoot(doc)
 （3）读取节点名称（标签），读取该节点的子节点名称
-      
+> xmlName(rootNode)
+[1] "breakfast_menu"
+> subNodesNames <- names(rootNode)
+> subNodesNames
+  food food food food food 
+"food" "food" "food" "food" "food" 
+> subNodesNames[1]
+  food 
+"food" 
+> subNodesNames[[1]]
+[1] "food"      
 （4）读取子节点：
+   > rootNode[1]
+$food
+<food>
+  <name>Belgian Waffles</name>
+  <price>$5.95</price>
+  <description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
+  <calories>650</calories>
+</food> 
+
+attr(,"class")
+[1] "XMLInternalNodeList" "XMLNodeList" 
+> rootNode[[1]]
+<food>
+  <name>Belgian Waffles</name>
+  <price>$5.95</price>
+  <description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
+  <calories>650</calories>
+</food> 
+> rootNode[[1]][[1]]
+<name>Belgian Waffles</name> 
+（5） xmlSApply()：根据第二个参数要求，读取当前节点的所有子节点信息。
+> xmlSApply(rootNode,xmlValue)
+                                                                                                                    food 
+                              "Belgian Waffles$5.95Two of our famous Belgian Waffles with plenty of real maple syrup650" 
+                                                                                                                    food 
+                   "Strawberry Belgian Waffles$7.95Light Belgian waffles covered with strawberries and whipped cream900" 
+                                                                                                                    food 
+"Berry-Berry Belgian Waffles$8.95Light Belgian waffles covered with an assortment of fresh berries and whipped cream900" 
+                                                                                                                    food 
+                                               "French Toast$4.50Thick slices made from our homemade sourdough bread600" 
+                                                                                                                    food 
+                        "Homestyle Breakfast$6.95Two eggs, bacon or sausage, toast, and our ever-popular hash browns950" 
+> xmlSApply(rootNode,xmlName)
+  food food food food food 
+"food" "food" "food" "food" "food" 
+> xmlSApply(rootNode,xmlAttrs)
+$food
+NULL
+
+$food
+NULL
+
+$food
+NULL
+
+$food
+NULL
+
+$food
+NULL
+
+> xmlSApply(rootNode,xmlSize)
+food food food food food 
+   4 4 4 4 4 
    
-   （5） xmlSApply()：根据第二个参数要求，读取当前节点的所有子节点信息。
-    
 （6）xpathSApply()：按条件解析xml文件
             /node Tope level node
             //node Node at any level
             node[@attr-name] node with an attribute name
             node[@attr-name='bob'] node with attribute name attr-name and its value 'bob'
 示例1：列出所有level的指定标签的元素值
-
+> xpathSApply(rootNode,"//name",xmlValue)
+[1] "Belgian Waffles" "Strawberry Belgian Waffles" 
+[3] "Berry-Berry Belgian Waffles" "French Toast" 
+[5] "Homestyle Breakfast"  
 示例2：抓取并解析网页，得到所有的队名，以及它们的得分。
 
 
@@ -105,7 +170,7 @@ myjson <- toJSON(iris,pretty=TRUE)
 cat(myjson) ： cat（）按格式打印json数据
 iris2 <- fromJSON(myjson) ：从JSON对象再到data frame
 
-（七）使用data.table---data.table包
+（七）data.table---data.table包
 （1）继承自data.frame
 （2）创建data.table
 
